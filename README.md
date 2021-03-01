@@ -4,6 +4,8 @@ Clone of the bsd quiz game but in German only and uses TTS
 ## STEP 1
 Make sure you have BASH. If you're on windows, it's possible to run bash scripts. Here's a link that I haven't tried:
 
+https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
+
 ## STEP 2
 Make sure you have Anna's voice for the TTS (text to speech). These come pre-installed with MacOS (I pressume this will continue to be. I am using Big Sur as of today). One way to test this is to issue this command on the CLI: 
 
