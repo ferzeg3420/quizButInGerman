@@ -28,13 +28,6 @@ done < $TEMP_PATH
 let NUM_ELEMS=${#WORDS[@]}
 let MODULUS=${NUM_ELEMS}%2
 
-# abort if lines are uneven in german-to-english file
-if [ $MODULUS -ne $EVEN ]
-then
-  echo "uneven lines in file"
-  exit $ERROR_UNEVEN_LINES_IN_FILE
-fi
-
 checkGuess() {
   local answer=$1
 
@@ -78,7 +71,7 @@ do
     break
   elif [ $IS_CORRECT = $INCORRECT ]
   then
-    echo "The right answer was: ${ANSWER}"
+    echo "The right answer was: ${ANSWER%%|*}"
     echo 
   else
     exit $ERROR_CHECK_GUESS_RETVAL
