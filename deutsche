@@ -1,0 +1,101 @@
+#!/bin/bash
+
+#constants
+EVEN=0
+NO_ERRORS=0
+ERROR_UNEVEN_LINES_IN_FILE=1
+ERROR_CHECK_GUESS_RETVAL=1
+EXIT_SIGNAL=2
+CORRECT=1
+INCORRECT=0
+FILE_PATH="/Users/fernandozegada/Documents/languages/german-to-english"
+TEMP_PATH="/tmp/deutsche.temp"
+
+# Declare array
+declare -a WORDS
+
+cat $FILE_PATH | sort -R > $TEMP_PATH
+
+# put the file in an array
+let count=0
+while read -r LINE
+do
+   WORDS[$count]="$LINE"
+   ((count++))
+done < $TEMP_PATH
+
+# echo Number of elements: ${#WORDS[@]}
+let NUM_ELEMS=${#WORDS[@]}
+let MODULUS=${NUM_ELEMS}%2
+
+# abort if lines are uneven in german-to-english file
+if [ $MODULUS -ne $EVEN ]
+then
+  echo "uneven lines in file"
+  exit $ERROR_UNEVEN_LINES_IN_FILE
+fi
+
+checkGuess() {
+  local answer=$1
+
+  while read -r guess
+  do
+    if [[ "$guess" =~ ($answer) ]]
+    then
+      echo $CORRECT
+      break
+    elif [ "$guess" = "" ] 
+    then
+      echo $INCORRECT
+      break
+    elif [ "q" = "$guess" ]
+    then
+      echo $EXIT_SIGNAL
+      break
+    fi
+  done   
+}
+
+let CORRECT_COUNT=0
+
+# main loop
+for (( i=0;i<$NUM_ELEMS;i++))
+do
+  PROMPT="${WORDS[${i}]%:*}"
+  ANSWER="${WORDS[${i}]#*:}"
+
+  echo "$PROMPT"
+  say -v "Anna" "$PROMPT"
+
+  IS_CORRECT=$(checkGuess "${ANSWER}")
+
+  if [ $IS_CORRECT = $CORRECT ]
+  then
+    ((CORRECT_COUNT++))
+  elif [ $IS_CORRECT = $EXIT_SIGNAL ]
+  then
+    ((i-=1))
+    break
+  elif [ $IS_CORRECT = $INCORRECT ]
+  then
+    echo "The right answer was: ${ANSWER}"
+    echo 
+  else
+    exit $ERROR_CHECK_GUESS_RETVAL
+  fi
+done
+ 
+let QUESTION_NUM=$i+1
+# echo "QUESTION_NUM=${QUESTION_NUM}"
+
+SCORE_PERCENTAGE=`echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc`
+SCORE_PERCENTAGE=`echo ${SCORE_PERCENTAGE} | awk '{print int($1+0.5)}'`
+echo "FINAL SCORE: ${SCORE_PERCENTAGE}%"
+
+exit $NO_ERRORS
+
+# echo array's content
+# echo ${WORDS[@]}
+
+# restore stdin from filedescriptor 10
+# and close filedescriptor 10
