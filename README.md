@@ -41,5 +41,5 @@ TEMP_PATH=""
 
 Write the path to the german-to-english file for FILE_PATH and write the path to the /tmp/ directories in the second one. If you don't have a temp directory, just pick any directory that you rarely look at. I left the ones I use as an example. The error messages you'll get if you don't read this should also help because I bet your username is not fernandozegada.
 
-## step 5
+## STEP 5
 Check out the original quiz in the BSD games created around the 70s. I don't know by who but I like them whoever they are.
