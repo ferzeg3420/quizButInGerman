@@ -10,9 +10,13 @@ CORRECT=1
 INCORRECT=0
 FILE_PATH="/Users/fernandozegada/Documents/languages/german-to-english"
 TEMP_PATH="/tmp/deutsche.temp"
+TEMP_INCORRECT_PATH="/tmp/deutsche_incorrect.temp"
 
 # Declare array
 declare -a WORDS
+
+#clear or create the incorrect answers file
+echo -n "" > "$TEMP_INCORRECT_PATH"
 
 cat $FILE_PATH | sort -R > $TEMP_PATH
 
@@ -28,11 +32,26 @@ done < $TEMP_PATH
 let NUM_ELEMS=${#WORDS[@]}
 let MODULUS=${NUM_ELEMS}%2
 
+tolower() {
+  echo "$1" | tr '[:upper:]' '[:lower:]'
+}
+
+showWrongGuesses() {
+  echo "Show incorrect guesses? [Y/y]"
+
+  read USER_RESPONSE
+  if [[ "$USER_RESPONSE" =~ [Yy] ]]
+  then
+    less "$TEMP_INCORRECT_PATH"
+  fi
+}
+
 checkGuess() {
   local answer=$1
 
   while read -r guess
   do
+    guess=`tolower "$guess"`
     if [[ "$guess" =~ ($answer) ]]
     then
       echo $CORRECT
@@ -55,8 +74,9 @@ let CORRECT_COUNT=0
 for (( i=0;i<$NUM_ELEMS;i++))
 do
   PROMPT="${WORDS[${i}]%:*}"
-  ANSWER="${WORDS[${i}]#*:}"
-
+  ANSWER_RAW="${WORDS[${i}]#*:}"
+  ANSWER=`tolower "$ANSWER_RAW"`
+ 
   echo "$PROMPT"
   say -v "Anna" "$PROMPT"
 
@@ -73,6 +93,7 @@ do
   then
     echo "The right answer was: ${ANSWER%%|*}"
     echo 
+    echo "${PROMPT} -> ${ANSWER_RAW}" >> "$TEMP_INCORRECT_PATH"
   else
     exit $ERROR_CHECK_GUESS_RETVAL
   fi
@@ -84,11 +105,7 @@ let QUESTION_NUM=$i+1
 SCORE_PERCENTAGE=`echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc`
 SCORE_PERCENTAGE=`echo ${SCORE_PERCENTAGE} | awk '{print int($1+0.5)}'`
 echo "FINAL SCORE: ${SCORE_PERCENTAGE}%"
+echo
+showWrongGuesses
 
 exit $NO_ERRORS
-
-# echo array's content
-# echo ${WORDS[@]}
-
-# restore stdin from filedescriptor 10
-# and close filedescriptor 10
