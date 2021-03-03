@@ -30,7 +30,6 @@ beim:at
 aber:but
 seine:his|its
 durch:by
-von:from
 wir:we
 sagen:say
 ihm:him
@@ -64,6 +63,7 @@ ihm:him
 kennt:know|knows
 nehmen:take
 menschen:people
+leute:people
 in:into|in
 jahr:year
 ihre:your|their
@@ -143,16 +143,15 @@ flöte:flute
 katze:cat
 mond:moon
 mädchen:girl
-Bewegung:move
+bewegung:move
 lauf:run
 friedhof:graveyard|cemetery
 gras:grass
 geist:ghost|spirit
-wolke:cloud
 klavier:piano
 brot:bread
 hund:dog
-fernsehen:television:tv
+fernsehen:television|tv
 pflanze:plant
 bolivianisch:bolivian
 kreuz:cross
@@ -171,14 +170,12 @@ augen:eyes
 mund:mouth
 haar:hair
 ohren:ears
-stück:piece
 fenster:window
 beine:legs
-arm:arm
-waffen:arm
+arm:poor
+waffen:arm|weapons
 nase:nose
 bart:beard
-film:movie
 hemd:shirt
 schürze:apron
 milch:milk
@@ -191,7 +188,7 @@ schrei:cry
 ratte:rat
 maus:mouse
 hand:hand
-nachname
+nachname:surname|last name
 vorname:first name
 lastwagen:truck
 wagen:car
@@ -201,7 +198,7 @@ akkord:chord
 socken:socks
 mathematik:math
 genial:awesome
-verrückt
+verrückt:crazy
 berg:mountain
 hose:pants
 schläger:bat
@@ -209,6 +206,8 @@ zutaten:ingredients
 bar:bar
 unterwäsche:underwear
 gewehr:gun
+waffe:weapon
+film:movie
 malerei:painting
 schreibtisch:desk
 tabelle:table
@@ -219,7 +218,7 @@ fehler:bug
 gecko:gecko
 musik:music
 hintern:butt
-ellbogen
+ellbogen:elbow
 knie:knee
 halsband:collar
 buch:book
@@ -232,7 +231,7 @@ fluss:river
 werkzeuge:tool
 porträt:portrait
 baum:tree
-Schließfach:locker
+schließfach:locker
 kirche:church
 kamera:camera
 würfel:dice
@@ -269,7 +268,7 @@ schnurrbart:moustache
 pfeifen:whistle
 pferd:horse
 spitzbart:goatee
-race:rennen
+rennen:race
 armband:bracelet
 gefängnis:jail
 langweilig:boring
@@ -293,7 +292,7 @@ hölle:hell
 bh:bra
 zwiebel:onion
 salat:salad|lettuce
-tomato:tomate
+tomate:tomato
 balkon:balcony
 sofa:sofa
 übung:exercise
@@ -302,6 +301,7 @@ nachmittag:afternoon
 computer:computer
 bildschirm:screen
 warten:wait
+warte:wait
 kamin:chimney
 landschaft:landscape
 topf:pot
@@ -357,8 +357,8 @@ mumie:mummy
 film:movie|film
 stück:piece
 stecken:stuck
-Türknauf:doorknob|knob
-Schwanz:tail
+türknauf:doorknob|knob
+schwanz:tail
 jünger:younger
 blume:flower
 übersetzen:translate
@@ -373,6 +373,7 @@ schädel:skull
 tastaur:keyboard
 schreiben:write
 senden:send
+schicken:send
 rechnung:bill
 netzwerk:network
 bild:image
@@ -440,7 +441,7 @@ freuen:women
 wenige:few
 weniger:less
 party:party
-balloon:ballon
+ballon:balloon
 fußball:soccer
 montag:monday
 dienstag:tuesday
@@ -502,7 +503,7 @@ oma:grandmother
 großvater:grandfather
 wissenschaft:science
 wissenschaftlerin:scientist
-straße:road
+straße:road|street
 nudeln:noodles
 nudel:noodle
 reis:rice
@@ -517,7 +518,7 @@ biologie:biology
 sohn:son
 tochter:daughter
 komisch:funny
-Komödie:comedy
+komödie:comedy
 fahrt:drive|ride
 vogel:bird
 krakenwagen:ambulance
@@ -598,7 +599,6 @@ jucken:itch
 ehrlich:honest
 finden:find
 residenz:residence
-arm:poor
 planen:plan
 werfen:toss
 kuh:cow
@@ -645,12 +645,12 @@ bleistift:pencil
 verweigern:deny
 tinte:ink
 perücke:wig
-rhythmus:rhythmn:beat
+rhythmus:rhythmn|beat
 kissen:pillow
 wein:wine
 platz:place
 albtraum:nightmare
-dampf
+dampf:steam
 kühlschrank:fridge|refridgerator
 soße:sauce
 salz:salt
@@ -701,7 +701,7 @@ beispiel:example
 häufig:often
 oft:often
 pflege:care
-ever:je
+je:ever
 bald:soon
 verlassen:leave
 lassen:leave
@@ -741,3 +741,45 @@ gefallen:favor
 dusche:shower
 dummkopf:idiot
 waschen:wash
+impfstoff:vaccine
+menu:speisekarte
+ehefrau:wife
+mann:husband
+spaß:fun
+küche:kitchen
+bismal:until now
+serviette:napkin
+moskito:mosquito
+bohren:drill
+halt:stop
+lichtschalter:light switch
+hals:neck
+kopf:head
+film:movie
+gehirn:brain
+bauch:stomach
+krebs:cancer
+stier:taurus
+sternzeichen:zodiac sign
+klicken:click
+zusammen:together
+immer:always
+sicher:for sure
+reich:rich
+genau:agreed|i agree
+letze:last
+muss:got to|have to
+ende:end|the end
+kuchen:cake
+geöffnet:open
+beruf:profession
+lese:read|reading
+lesen:read
+kein:no
+helfen:help
+hausaufgaben:homework
+nacht:night
+mitternacht:midnight
+schlüssel:key
+nabel:belly button
+
