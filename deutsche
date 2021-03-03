@@ -37,12 +37,16 @@ tolower() {
 }
 
 showWrongGuesses() {
-  echo "Show incorrect guesses? [Y/y]"
-
-  read USER_RESPONSE
-  if [[ "$USER_RESPONSE" =~ [Yy] ]]
+  FIRST_LINE=`head -1 "${TEMP_INCORRECT_PATH}"`
+  if [ "$FIRST_LINE" != "" ]
   then
-    less "$TEMP_INCORRECT_PATH"
+    echo "Show incorrect guesses? [Y/y]"
+
+    read USER_RESPONSE
+    if [[ "$USER_RESPONSE" =~ [Yy] ]]
+    then
+      less "$TEMP_INCORRECT_PATH"
+    fi
   fi
 }
 
