@@ -2,25 +2,29 @@
 
 #constants
 EVEN=0
-NO_ERRORS=0
+SUCCESS=0
 ERROR_UNEVEN_LINES_IN_FILE=1
-ERROR_CHECK_GUESS_RETVAL=1
+ERROR_CHECK_GUESS_RETVAL=3
+ERROR_BAD_FLAGS=4
+ERROR_NOT_A_NUMBER=5
+ERROR_LIMIT_TOO_LARGE=6
 EXIT_SIGNAL=2
 CORRECT=1
 INCORRECT=0
 FILE_PATH="/Users/fernandozegada/Documents/languages/german-to-english"
 TEMP_PATH="/tmp/deutsche.temp"
 TEMP_INCORRECT_PATH="/tmp/deutsche_incorrect.temp"
+LIMIT=''
 
-# Declare array
+# Declare the array of words
 declare -a WORDS
 
-#clear or create the incorrect answers file
+# clear or create the incorrect answers file
 echo -n "" > "$TEMP_INCORRECT_PATH"
 
 cat $FILE_PATH | sort -R > $TEMP_PATH
 
-# put the file in an array
+# put the lines of the file in a the words array
 let count=0
 while read -r LINE
 do
@@ -28,9 +32,48 @@ do
    ((count++))
 done < $TEMP_PATH
 
-# echo Number of elements: ${#WORDS[@]}
 let NUM_ELEMS=${#WORDS[@]}
-let MODULUS=${NUM_ELEMS}%2
+
+print_usage() {
+  echo
+  echo "Usage: deutsche [-h] [-l number]"
+  echo "    Try and translate all of these german words!"
+  echo
+  echo "    -h    Prints this message and quits"
+  echo "    -l    Limits the number of words the user has to translate"
+  echo "    -e    Edit the answer sheet with your default editor"
+  echo
+}
+
+validateLimit() {
+  if [[ "$1" =~ ^[1-9][0-9]*$ ]]
+  then
+    if [ $NUM_ELEMS -lt "$1" ]
+    then
+      echo "The limit value is larger than the number of elements" >2
+      exit $ERROR_LIMIT_TOO_LARGE
+    fi
+  else
+    echo "The limit value is not a valid number" >2
+    exit $ERROR_NOT_A_NUMBER
+  fi
+}
+
+# process flags (command options)
+while getopts 'hl:e' flag
+do
+  case "${flag}"
+  in
+    l) validateLimit "${OPTARG}"
+       LIMIT=${OPTARG};;
+    h) print_usage 
+       exit $SUCCESS;;
+    e) ${EDITOR} ${FILE_PATH} 
+       exit $?;;
+    *) print_usage
+       exit $ERROR_BAD_FLAGS ;;
+  esac
+done
 
 tolower() {
   echo "$1" | tr '[:upper:]' '[:lower:]'
@@ -74,8 +117,22 @@ checkGuess() {
 
 let CORRECT_COUNT=0
 
+#welcome message
+clear
+echo
+echo "You can enter q to quit at any time. Good luck!"
+echo
+
+if [ "$LIMIT" = '' ]
+then
+  let NUM_WORDS_TO_GUESS=$NUM_ELEMS
+else
+  validateLimit "$LIMIT"
+  let NUM_WORDS_TO_GUESS="$LIMIT"
+fi
+
 # main loop
-for (( i=0;i<$NUM_ELEMS;i++))
+for (( i=0; i<$NUM_WORDS_TO_GUESS; i++))
 do
   PROMPT="${WORDS[${i}]%:*}"
   ANSWER_RAW="${WORDS[${i}]#*:}"
@@ -106,10 +163,20 @@ done
 let QUESTION_NUM=$i+1
 # echo "QUESTION_NUM=${QUESTION_NUM}"
 
-SCORE_PERCENTAGE=`echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc`
-SCORE_PERCENTAGE=`echo ${SCORE_PERCENTAGE} | awk '{print int($1+0.5)}'`
+if [ $QUESTION_NUM -eq 0 ]
+then
+  SCORE_PERCENTAGE=0
+else
+  SCORE_PERCENTAGE=`echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc`
+  SCORE_PERCENTAGE=`echo ${SCORE_PERCENTAGE} | awk '{print int($1+0.5)}'`
+fi
+
+#end message
+clear
+echo
 echo "FINAL SCORE: ${SCORE_PERCENTAGE}%"
 echo
 showWrongGuesses
+clear
 
-exit $NO_ERRORS
+exit $SUCCESS

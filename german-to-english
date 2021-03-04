@@ -172,7 +172,7 @@ haar:hair
 ohren:ears
 fenster:window
 beine:legs
-arm:poor
+arm:poor|arm
 waffen:arm|weapons
 nase:nose
 bart:beard
@@ -246,7 +246,7 @@ sichel:sickle
 messer:knife
 passen:suit
 flagge:flag
-kappe:baseball cap
+kappe:baseball cap|cap
 schild:sign
 unterschrift:signature
 englisch:english
@@ -725,7 +725,7 @@ poop:poop
 bank:bank
 wurzel:root
 kopieren:copy
-einfügen:paste
+einfügen:paste|insert
 industrie:industry
 sitz:seat
 rindfleisch:meat
@@ -742,7 +742,7 @@ dusche:shower
 dummkopf:idiot
 waschen:wash
 impfstoff:vaccine
-menu:speisekarte
+speisekarte:menu
 ehefrau:wife
 mann:husband
 spaß:fun
@@ -755,7 +755,6 @@ halt:stop
 lichtschalter:light switch
 hals:neck
 kopf:head
-film:movie
 gehirn:brain
 bauch:stomach
 krebs:cancer
@@ -782,4 +781,28 @@ nacht:night
 mitternacht:midnight
 schlüssel:key
 nabel:belly button
-
+farbe:color
+fahrrad:bicycle
+kalt:cold
+heiß:hot
+warm:warm
+wurm:worm
+raupe:caterpillar
+hungrig:hungry
+gier:greed
+anwalt:lawyer
+lachen:laugh
+lächeln:smile
+sore:wund
+einstellungen:settings
+anmelden:sign up
+ausloggen:log out
+scheibe:disk
+schließen:close
+sekundend:seconds
+minuten:minutes
+verkleiden:dress up
+beeilen:hurry
+achtung:watch out
+darsteller:actor
+darstellerin:actress
