@@ -1,5 +1,5 @@
 # quizButInGerman
-Clone of the bsd quiz game but in German only and uses TTS
+Clone of the bsd quiz game but in German only and uses TTS (text to speech).
 
 ## STEP 1
 Make sure you have BASH. If you're on windows, it's possible to run bash scripts. Here's a link that I haven't tried:
@@ -7,7 +7,7 @@ Make sure you have BASH. If you're on windows, it's possible to run bash scripts
 https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
 
 ## STEP 2
-Make sure you have Anna's voice for the TTS (text to speech). These come pre-installed with MacOS (I pressume this will continue to be. I am using Big Sur as of today). One way to test this is to issue this command on the CLI: 
+Make sure you have Anna's voice for the TTS (text to speech). These voices should come pre-installed with MacOS (I pressume this will continue to be. As of March 2021 I am using a fully updated MacOS 11.2.1). One way to test this is to issue this command on the CLI: 
 
 ```
 say -v Anna 'Deutsche'
@@ -16,20 +16,20 @@ say -v Anna 'Deutsche'
 Make sure to turn up your speakers. 
 
 ## STEP 3
-Put the file named deutsche in your ~/bin/ directory. But first, you need to make sure it is executable by issuing this command:
+Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by issuing this command:
 
 ```
 chmod u+x deutsche
 ```
 
-in the directory where this file is in.
+Remember that to issue this last command, you must be in the directory where the *deutsche* file is in.
 
 ## STEP 4
 
-Use emacs or sublime or nano or any other editor. To edit the shell script.
+Use emacs, vim, sublime, nano or any other editor to edit the *deutsche* shell script:
 
 ```
-vim deutsche
+${EDITOR} deutsche
 ```
 
 look for these variables:
@@ -40,7 +40,10 @@ TEMP_PATH=""
 TEMP_INCORRECT_PATH=""
 ```
 
-Write the path to the german-to-english file for FILE_PATH and write the path to the /tmp/ directories in the last two. If you don't have a temp directory, just pick any directory that you rarely look at. I left the ones I use as an example (which will work on macos and also linux I believe). The error messages you'll get if you didn't read this and ran the program should also help because you I bet your username is not yourusername or fernandozegada (depends on whether I remembered to change that).
+Write the path to the german-to-english file for FILE_PATH (**do not put the german-to-english file in /tmp because it'll be lost when you reboot your computer**) and write the path to the /tmp/ directories in the last two. If you don't have a temp directory, just pick any directory that you rarely look at. I left the ones I use as an example (which will work on macos and also linux I believe). The error messages you'll get if you didn't read this and ran the program should also help.
 
 ## STEP 5
-Check out the original quiz in the BSD games created around the 70s. I don't know by who but I like them whoever they are.
+Check out the original quiz game in the BSD games created in the 70s or whereabouts. I don't know who created these games, but a big thank you to the creators (I assume it was CS faculty in UCB in the 70s-80s). 
+
+Here's Mike Sharov's fork:
+#https://github.com/msharov/bsd-games
