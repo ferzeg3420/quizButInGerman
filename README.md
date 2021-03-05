@@ -1,5 +1,7 @@
 # quizButInGerman
-Clone of the bsd quiz game but in German only and uses TTS (text to speech).
+This script is a clone of the bsd quiz game but specifically for German words. It also uses TTS (text to speech) so that users can hear how to pronounce the words.
+
+#Installation
 
 ## STEP 1
 Make sure you have BASH. If you're on windows, it's possible to run bash scripts. Here's a link that I haven't tried:
@@ -16,17 +18,17 @@ say -v Anna 'Deutsche'
 Make sure to turn up your speakers. 
 
 ## STEP 3
-Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by issuing this command:
+Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by issuing the following command:
 
 ```
 chmod u+x deutsche
 ```
 
-Remember that to issue this last command, you must be in the directory where the *deutsche* file is in.
+Remember that to use this last command, you must be in the directory where the *deutsche* file is in.
 
 ## STEP 4
 
-Use emacs, vim, sublime, nano or any other editor to edit the *deutsche* shell script:
+Edit some variables in the *deutsche* shell script:
 
 ```
 ${EDITOR} deutsche
@@ -40,10 +42,10 @@ TEMP_PATH=""
 TEMP_INCORRECT_PATH=""
 ```
 
-Write the path to the german-to-english file for FILE_PATH (**do not put the german-to-english file in /tmp because it'll be lost when you reboot your computer**) and write the path to the /tmp/ directories in the last two. If you don't have a temp directory, just pick any directory that you rarely look at. I left the ones I use as an example (which will work on macos and also linux I believe). The error messages you'll get if you didn't read this and ran the deutsche script should also help.
+For **FILE_PATH** write the path to where you'll be storing your german-to-english file (**do not put the german-to-english file in /tmp because it'll be lost when you reboot your computer**). Then for **TEMP_PATH** write something like: */tmp/d.temp*. Choose a similar name for **TEMP_INCORRECT_PATH** I'm leaving the paths I used as an example if you're not feeling creative.
 
 ## STEP 5
-Be sure to check out the original quiz game and the other BSD games created in the 70s. I don't know who created these games, but a big thank you to the creators (I assume it was CS faculty in UCB in the 70s-80s). 
+Be sure to check out the original quiz game and the other BSD games created in the 70s. I don't know who created these games, but a big thank you to the creators (I assume it was CS faculty at UCB in the 70s-80s). 
 
-Here's Mike Sharov's fork:
+Here's a link to Mike Sharov's fork:
 #https://github.com/msharov/bsd-games
