@@ -48,4 +48,4 @@ For **FILE_PATH** write the path to where you'll be storing your german-to-engli
 Be sure to check out the original quiz game and the other BSD games created in the 70s. I don't know who created these games, but a big thank you to the creators (I assume it was CS faculty at UCB in the 70s-80s). 
 
 Here's a link to Mike Sharov's fork:
-#https://github.com/msharov/bsd-games
+https://github.com/msharov/bsd-games
