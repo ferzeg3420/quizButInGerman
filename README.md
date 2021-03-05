@@ -1,7 +1,7 @@
 # quizButInGerman
 This script is a clone of the bsd quiz game but specifically for German words. It also uses TTS (text to speech) so that users can hear how to pronounce the words.
 
-#Installation
+# Installation
 
 ## STEP 1
 Make sure you have BASH. If you're on windows, it's possible to run bash scripts. Here's a link that I haven't tried:
