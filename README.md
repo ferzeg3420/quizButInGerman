@@ -40,10 +40,10 @@ TEMP_PATH=""
 TEMP_INCORRECT_PATH=""
 ```
 
-Write the path to the german-to-english file for FILE_PATH (**do not put the german-to-english file in /tmp because it'll be lost when you reboot your computer**) and write the path to the /tmp/ directories in the last two. If you don't have a temp directory, just pick any directory that you rarely look at. I left the ones I use as an example (which will work on macos and also linux I believe). The error messages you'll get if you didn't read this and ran the program should also help.
+Write the path to the german-to-english file for FILE_PATH (**do not put the german-to-english file in /tmp because it'll be lost when you reboot your computer**) and write the path to the /tmp/ directories in the last two. If you don't have a temp directory, just pick any directory that you rarely look at. I left the ones I use as an example (which will work on macos and also linux I believe). The error messages you'll get if you didn't read this and ran the deutsche script should also help.
 
 ## STEP 5
-Check out the original quiz game in the BSD games created in the 70s or whereabouts. I don't know who created these games, but a big thank you to the creators (I assume it was CS faculty in UCB in the 70s-80s). 
+Be sure to check out the original quiz game and the other BSD games created in the 70s. I don't know who created these games, but a big thank you to the creators (I assume it was CS faculty in UCB in the 70s-80s). 
 
 Here's Mike Sharov's fork:
 #https://github.com/msharov/bsd-games
