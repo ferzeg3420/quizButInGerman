@@ -9,7 +9,7 @@ Make sure you have BASH. If you're on windows, it's possible to run bash scripts
 https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
 
 ## STEP 2
-Make sure you have Anna's voice for the TTS (text to speech). These voices should come pre-installed with MacOS (I pressume this will continue to be. As of March 2021 I am using a fully updated MacOS 11.2.1). One way to test this is to issue this command on the CLI: 
+Make sure you have Anna's voice for the TTS (text to speech). These voices should come pre-installed with MacOS (I pressume this will continue to be). One way to test this is to issue this command on the CLI: 
 
 ```
 say -v Anna 'Deutsche'
