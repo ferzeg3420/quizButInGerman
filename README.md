@@ -18,7 +18,7 @@ say -v Anna 'Deutsche'
 Make sure to turn up your speakers. 
 
 ## STEP 3
-Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by issuing the following command:
+Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by invoking the following command:
 
 ```
 chmod u+x deutsche
