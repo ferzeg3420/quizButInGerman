@@ -1,7 +1,7 @@
 # quizButInGerman
 This script is a clone of the bsd quiz game but specifically for German words. It also uses TTS (text to speech) so that users can hear how to pronounce the words.
 
-#Installation
+# Installation
 
 ## STEP 1
 Make sure you have BASH. If you're on windows, it's possible to run bash scripts. Here's a link that I haven't tried:
@@ -9,7 +9,7 @@ Make sure you have BASH. If you're on windows, it's possible to run bash scripts
 https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
 
 ## STEP 2
-Make sure you have Anna's voice for the TTS (text to speech). These voices should come pre-installed with MacOS (I pressume this will continue to be. As of March 2021 I am using a fully updated MacOS 11.2.1). One way to test this is to issue this command on the CLI: 
+Make sure you have Anna's voice for the TTS (text to speech). These voices should come pre-installed with MacOS (I pressume this will continue to be). One way to test this is to issue this command on the CLI: 
 
 ```
 say -v Anna 'Deutsche'
@@ -18,7 +18,7 @@ say -v Anna 'Deutsche'
 Make sure to turn up your speakers. 
 
 ## STEP 3
-Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by issuing the following command:
+Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by invoking the following command:
 
 ```
 chmod u+x deutsche
