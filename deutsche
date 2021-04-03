@@ -94,7 +94,7 @@ showWrongGuesses() {
 }
 
 checkGuess() {
-  local answer=$1
+  local answer="^${1}\$"
 
   while read -r guess
   do
