@@ -1,9 +1,7 @@
 #!/bin/bash
 
 #constants
-EVEN=0
 SUCCESS=0
-ERROR_UNEVEN_LINES_IN_FILE=1
 ERROR_CHECK_GUESS_RETVAL=3
 ERROR_BAD_FLAGS=4
 ERROR_NOT_A_NUMBER=5
@@ -22,17 +20,17 @@ declare -a WORDS
 # clear or create the incorrect answers file
 echo -n "" > "$TEMP_INCORRECT_PATH"
 
-cat $FILE_PATH | sort -R > $TEMP_PATH
+sort -R "$FILE_PATH" > $TEMP_PATH
 
 # put the lines of the file in a the words array
-let count=0
+count=0
 while read -r LINE
 do
    WORDS[$count]="$LINE"
    ((count++))
 done < $TEMP_PATH
 
-let NUM_ELEMS=${#WORDS[@]}
+NUM_ELEMS=${#WORDS[@]}
 
 print_usage() {
   echo
@@ -48,13 +46,13 @@ print_usage() {
 validateLimit() {
   if [[ "$1" =~ ^[1-9][0-9]*$ ]]
   then
-    if [ $NUM_ELEMS -lt "$1" ]
+    if [ "$NUM_ELEMS" -lt "$1" ]
     then
-      echo "The limit value is larger than the number of elements" >2
+      echo "The limit value is larger than the number of elements" >&2
       exit $ERROR_LIMIT_TOO_LARGE
     fi
   else
-    echo "The limit value is not a valid number" >2
+    echo "The limit value is not a valid number" >&2
     exit $ERROR_NOT_A_NUMBER
   fi
 }
@@ -80,12 +78,12 @@ tolower() {
 }
 
 showWrongGuesses() {
-  FIRST_LINE=`head -1 "${TEMP_INCORRECT_PATH}"`
+  FIRST_LINE=$(head -1 "${TEMP_INCORRECT_PATH}")
   if [ "$FIRST_LINE" != "" ]
   then
     echo "Show incorrect guesses? [Y/y]"
 
-    read USER_RESPONSE
+    read -r USER_RESPONSE
     if [[ "$USER_RESPONSE" =~ [Yy] ]]
     then
       less "$TEMP_INCORRECT_PATH"
@@ -98,7 +96,7 @@ checkGuess() {
 
   while read -r guess
   do
-    guess=`tolower "$guess"`
+    guess=$(tolower "$guess")
     if [[ "$guess" =~ ($answer) ]]
     then
       echo $CORRECT
@@ -115,7 +113,7 @@ checkGuess() {
   done   
 }
 
-let CORRECT_COUNT=0
+CORRECT_COUNT=0
 
 #welcome message
 clear
@@ -125,32 +123,32 @@ echo
 
 if [ "$LIMIT" = '' ]
 then
-  let NUM_WORDS_TO_GUESS=$NUM_ELEMS
+  NUM_WORDS_TO_GUESS="$NUM_ELEMS"
 else
   validateLimit "$LIMIT"
-  let NUM_WORDS_TO_GUESS="$LIMIT"
+  NUM_WORDS_TO_GUESS="$LIMIT"
 fi
 
 # main loop
-for (( i=0; i<$NUM_WORDS_TO_GUESS; i++))
+for (( i=0; i<NUM_WORDS_TO_GUESS; i++))
 do
   PROMPT="${WORDS[${i}]%:*}"
   ANSWER_RAW="${WORDS[${i}]#*:}"
-  ANSWER=`tolower "$ANSWER_RAW"`
+  ANSWER=$(tolower "$ANSWER_RAW")
  
-  echo "$PROMPT"
+  printf "\e[1;34m%s\e[0m\n" "$PROMPT"
   say -v "Anna" "$PROMPT"
 
   IS_CORRECT=$(checkGuess "${ANSWER}")
 
-  if [ $IS_CORRECT = $CORRECT ]
+  if [ "$IS_CORRECT" = "$CORRECT" ]
   then
     ((CORRECT_COUNT++))
-  elif [ $IS_CORRECT = $EXIT_SIGNAL ]
+  elif [ "$IS_CORRECT" = "$EXIT_SIGNAL" ]
   then
     ((i-=1))
     break
-  elif [ $IS_CORRECT = $INCORRECT ]
+  elif [ "$IS_CORRECT" = "$INCORRECT" ]
   then
     echo "The right answer was: ${ANSWER%%|*}"
     echo 
@@ -160,15 +158,15 @@ do
   fi
 done
  
-let QUESTION_NUM=$i+1
+QUESTION_NUM=$(echo "$i + 1" |  bc)
 # echo "QUESTION_NUM=${QUESTION_NUM}"
 
-if [ $QUESTION_NUM -eq 0 ]
+if [ "$QUESTION_NUM" -eq 0 ]
 then
   SCORE_PERCENTAGE=0
 else
-  SCORE_PERCENTAGE=`echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc`
-  SCORE_PERCENTAGE=`echo ${SCORE_PERCENTAGE} | awk '{print int($1+0.5)}'`
+    SCORE_PERCENTAGE=$(echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc)
+  SCORE_PERCENTAGE=$(echo "${SCORE_PERCENTAGE}" | awk '{print int($1+0.5)}')
 fi
 
 #end message
