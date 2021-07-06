@@ -43,6 +43,55 @@ print_usage() {
   echo
 }
 
+prettifyAnswers() {
+  isCorrectAnswer="$1"
+  answers="$2"
+  isMultipleAnswers=$(echo "$answers" | grep "\|")
+
+  normalized=$(echo "$answers" | sed -e "s/\| /\|/g" -e "s/ \|/\|/g")
+  if test -n "$isMultipleAnswers"
+  then
+    if test "$isCorrectAnswer" = "true"
+    then
+      echo -n "Right! "
+    fi
+
+    IFS='|'
+    lastAnswer=$(echo "$normalized" | sed "s/[^\|]//g" | tr -d '\n' | wc -m | tr -d ' ')
+
+    ((j = 0))
+    for i in $normalized 
+    do  
+      if test "$j" -eq "0"
+      then
+        echo -n "${i}"
+      elif test "$j" -eq "$lastAnswer"
+      then
+        if test "$j" -eq "1"
+        then
+          echo -n " or ${i}"
+        else
+          echo -n ", or ${i}"
+        fi
+      else
+        echo -n ", ${i}"
+      fi
+      ((j = j + 1))
+    done
+
+    unset IFS
+    echo -n " are accepted answers."
+    echo
+  else
+      if test "$isCorrectAnswer" = "true"
+      then
+          echo "$answers is correct!"
+      else
+          echo "$answers is the correct answer."
+      fi
+  fi
+}
+
 validateLimit() {
   if [[ "$1" =~ ^[1-9][0-9]*$ ]]
   then
@@ -136,13 +185,15 @@ do
   ANSWER_RAW="${WORDS[${i}]#*:}"
   ANSWER=$(tolower "$ANSWER_RAW")
  
-  printf "\e[1;34m%s\e[0m\n" "$PROMPT"
+  printf "\e[1;35m%s\e[0m\n" "$PROMPT"
   say -v "Anna" "$PROMPT"
 
   IS_CORRECT=$(checkGuess "${ANSWER}")
 
   if [ "$IS_CORRECT" = "$CORRECT" ]
   then
+    prettyAnswers=$(prettifyAnswers "true" "$ANSWER")
+    printf "\n\e[1;32m%s\e[0m\n\n" "${prettyAnswers}"
     ((CORRECT_COUNT++))
   elif [ "$IS_CORRECT" = "$EXIT_SIGNAL" ]
   then
@@ -150,7 +201,8 @@ do
     break
   elif [ "$IS_CORRECT" = "$INCORRECT" ]
   then
-    echo "The right answer was: ${ANSWER%%|*}"
+    prettyAnswers=$(prettifyAnswers "false" "$ANSWER")
+    printf "\e[1;31m%s\e[0m\n" "${prettyAnswers}"
     echo 
     echo "${PROMPT} -> ${ANSWER_RAW}" >> "$TEMP_INCORRECT_PATH"
   else
