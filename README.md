@@ -4,7 +4,7 @@ This script is a clone of the bsd quiz game but specifically for German words. I
 # Installation
 
 ## STEP 1
-Make sure you have BASH. If you're on windows, it's possible to run bash scripts. Here's a link that I haven't tried:
+Make sure you have BASH. If you're on windows, it's possible to run bash scripts. Here's a link that I haven't tried but that looks promising:
 
 https://www.howtogeek.com/249966/how-to-install-and-use-the-linux-bash-shell-on-windows-10/
 
@@ -15,16 +15,16 @@ Make sure you have Anna's voice for the TTS (text to speech). These voices shoul
 say -v Anna 'Deutsche'
 ```
 
-Make sure to turn up your speakers. 
+This test only works if you make sure to turn up your speakers. 
 
 ## STEP 3
-Put the file named *deutsche* in your ~/bin/ directory. But first, you need to make sure it is executable by invoking the following command:
+Put the file named *deutsche* in your ~/bin/ directory, But first make sure it is executable by calling the following command:
 
 ```
 chmod u+x deutsche
 ```
 
-Remember that to use this last command, you must be in the directory where the *deutsche* file is in.
+Remember that to use this last command one has to be in the directory where the *deutsche* file is in.
 
 ## STEP 4
 
@@ -47,5 +47,5 @@ For **FILE_PATH** write the path to where you'll be storing your german-to-engli
 ## STEP 5
 Be sure to check out the original quiz game and the other BSD games created in the 70s. I don't know who created these games, but a big thank you to the creators (I assume it was CS faculty at UCB in the 70s-80s). 
 
-Here's a link to Mike Sharov's fork:
+Here's a link to Mike Sharov's (whoever he is, thanks) fork:
 https://github.com/msharov/bsd-games

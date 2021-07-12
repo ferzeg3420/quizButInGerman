@@ -8,12 +8,13 @@ ERROR_NOT_A_NUMBER=5
 ERROR_LIMIT_TOO_LARGE=6
 EXIT_SIGNAL=2
 CORRECT=1
-INCORRECT=0
+GIVE_UP=0
 FILE_PATH="/Users/fernandozegada/Documents/languages/german-to-english"
 TEMP_PATH="/tmp/deutsche.temp"
 TEMP_INCORRECT_PATH="/tmp/deutsche_incorrect.temp"
 LIMIT=''
 DIFFICULTY=''
+IS_CORRECT=''
 
 # Declare the array of words
 declare -a WORDS
@@ -22,29 +23,30 @@ declare -a WORDS
 echo -n "" > "$TEMP_INCORRECT_PATH"
 
 print_usage() {
-  echo
-  echo "Usage: deutsche [-h] [-l number] [-d number]"
-  echo "    Try and translate all of these german words!"
-  echo
-  echo "    -h    Prints this message and quits"
-  echo "    -l    Limits the number of words the user has to translate"
-  echo "    -e    Edit the answer sheet with your default editor"
-  echo "    -d    Set the difficulty: 1) easy 2) medium 3) hard"
-  echo
+    echo
+    echo "Usage: deutsche [-h] [-l number] [-d number]"
+    echo "        Try and translate all of these german words!"
+    echo
+    echo "        -h    Prints this message and quits"
+    echo "        -b    Enables that hideous bell sound on mistakes"
+    echo "        -l    Limits the number of words the user has to translate"
+    echo "        -e    Edit the answer sheet with your default editor"
+    echo "        -d    Set the difficulty: 1) easy 2) medium 3) hard"
+    echo
 }
 
 validateLimit() {
-  if [[ "$1" =~ ^[1-9][0-9]*$ ]]
-  then
-    if [ "$NUM_ELEMS" -lt "$1" ]
+    if [[ "$1" =~ ^[1-9][0-9]*$ ]]
     then
-      echo "The limit value is larger than the number of elements" >&2
-      exit $ERROR_LIMIT_TOO_LARGE
+        if [ "$NUM_ELEMS" -lt "$1" ]
+        then
+            echo "The limit value is larger than the number of elements" >&2
+            exit $ERROR_LIMIT_TOO_LARGE
+        fi
+    else
+        echo "The limit value is not a valid number" >&2
+        exit $ERROR_NOT_A_NUMBER
     fi
-  else
-    echo "The limit value is not a valid number" >&2
-    exit $ERROR_NOT_A_NUMBER
-  fi
 }
 
 # Don't delete. This function exits on bad input for the -d flag.
@@ -59,19 +61,20 @@ setDifficulty() {
 }
 
 # process flags (command options)
-while getopts 'hl:ed:' flag
+while getopts 'hbl:ed:' flag
 do
-  case "${flag}"
-  in
-    l) LIMIT=${OPTARG};;
-    h) print_usage 
-       exit $SUCCESS;;
-    e) ${EDITOR} ${FILE_PATH} 
-       exit $?;;
-    d) setDifficulty "${OPTARG}";;
-    *) print_usage
-       exit $ERROR_BAD_FLAGS;;
-  esac
+    case "${flag}"
+    in
+        l) LIMIT=${OPTARG};;
+        h) print_usage 
+             exit $SUCCESS;;
+        b) BELL_ENABLED="TRUE";;
+        e) ${EDITOR} ${FILE_PATH} 
+             exit $?;;
+        d) setDifficulty "${OPTARG}";;
+        *) print_usage
+             exit $ERROR_BAD_FLAGS;;
+    esac
 done
 
 # combine all the files and random scramble them.
@@ -85,133 +88,121 @@ case "$DIFFICULTY" in
      | sort -R > $TEMP_PATH ;;
 esac
 
-#cat "${FILE_PATH}-easy" "${FILE_PATH}-medium" "${FILE_PATH}-hard" \
-     #| sort -R > $TEMP_PATH
-
-#sort -R "$FILE_PATH" > $TEMP_PATH
-
 # put the lines of the file in a the words array
 count=0
 while read -r LINE
 do
-   WORDS[$count]="$LINE"
-   ((count++))
+    WORDS[$count]="$LINE"
+    ((count++))
 done < $TEMP_PATH
 
 NUM_ELEMS=${#WORDS[@]}
 
 if test -n "$LIMIT"
 then
-   validateLimit "$LIMIT"
+     validateLimit "$LIMIT"
 fi
 
 prettifyAnswers() {
-  isCorrectAnswer="$1"
-  answers="$2"
-  isMultipleAnswers=$(echo "$answers" | grep "\|")
+    isCorrectAnswer="$1"
+    answers="$2"
+    isMultipleAnswers=$(echo "$answers" | grep "\|")
 
-  normalized=$(echo "$answers" | sed -e "s/\| /\|/g" -e "s/ \|/\|/g")
-  if test -n "$isMultipleAnswers"
-  then
-    if test "$isCorrectAnswer" = "true"
+    normalized=$(echo "$answers" | sed -e "s/\| /\|/g" -e "s/ \|/\|/g")
+    if test -n "$isMultipleAnswers"
     then
-      echo -n "Right! "
-    fi
-
-    IFS='|'
-    lastAnswer=$(echo "$normalized" | sed "s/[^\|]//g" | tr -d '\n' | wc -m | tr -d ' ')
-
-    ((j = 0))
-    for i in $normalized 
-    do  
-      if test "$j" -eq "0"
-      then
-        echo -n "${i}"
-      elif test "$j" -eq "$lastAnswer"
-      then
-        if test "$j" -eq "1"
+        if test "$isCorrectAnswer" = "true"
         then
-          echo -n " or ${i}"
-        else
-          echo -n ", or ${i}"
+            echo -n "Right! "
         fi
-      else
-        echo -n ", ${i}"
-      fi
-      ((j = j + 1))
-    done
 
-    unset IFS
-    echo -n " are accepted answers."
-    echo
-  else
-      if test "$isCorrectAnswer" = "true"
-      then
-          echo "$answers is correct!"
-      else
-          echo "$answers is the correct answer."
-      fi
-  fi
+        IFS='|'
+        lastAnswer=$(echo "$normalized" | sed "s/[^\|]//g" | tr -d '\n' | wc -m | tr -d ' ')
+
+        ((j = 0))
+        for i in $normalized 
+        do    
+            if test "$j" -eq "0"
+            then
+                echo -n "${i}"
+            elif test "$j" -eq "$lastAnswer"
+            then
+                if test "$j" -eq "1"
+                then
+                    echo -n " or ${i}"
+                else
+                    echo -n ", or ${i}"
+                fi
+            else
+                echo -n ", ${i}"
+            fi
+            ((j = j + 1))
+        done
+
+        unset IFS
+        echo -n " are accepted answers."
+        echo
+    else
+        if test "$isCorrectAnswer" = "true"
+        then
+            echo "$answers is correct!"
+        else
+            echo "$answers is the correct answer."
+        fi
+    fi
 }
 
-# process flags (command options)
-#while getopts 'hl:e' flag
-#do
-#  case "${flag}"
-#  in
-#    l) validateLimit "${OPTARG}"
-#       LIMIT=${OPTARG};;
-#    h) print_usage 
-#       exit $SUCCESS;;
-#    e) ${EDITOR} ${FILE_PATH} 
-#       exit $?;;
-#    *) print_usage
-#       exit $ERROR_BAD_FLAGS ;;
-#  esac
-#done
-
 tolower() {
-  echo "$1" | tr '[:upper:]' '[:lower:]'
+    echo "$1" | tr '[:upper:]' '[:lower:]'
 }
 
 showWrongGuesses() {
-  FIRST_LINE=$(head -1 "${TEMP_INCORRECT_PATH}")
-  if [ "$FIRST_LINE" != "" ]
-  then
-    printf "\e[7mShow incorrect guesses? [Y/y]:\e[0m "
-    read -r USER_RESPONSE
-
-    if [[ "$USER_RESPONSE" =~ [Yy] ]]
+    FIRST_LINE=$(head -1 "${TEMP_INCORRECT_PATH}")
+    if [ "$FIRST_LINE" != "" ]
     then
-      less "$TEMP_INCORRECT_PATH"
+        printf "\e[7mShow incorrect guesses? [Y/y]:\e[0m "
+        read -r USER_RESPONSE
+
+        if [[ "$USER_RESPONSE" =~ [Yy] ]]
+        then
+            less "$TEMP_INCORRECT_PATH"
+        fi
+    else
+        printf "\e[?25l\e[7mPress any key to exit"
+        read -rs
+        printf "\e[?25h\e[0m"
     fi
-  else
-    printf "\e[?25l\e[7mPress any key to exit"
-    read -rs
-    printf "\e[?25h\e[0m"
-  fi
 }
 
 checkGuess() {
-  local answer="^${1}\$"
+    local answer="^${1}\$"
 
-  while read -r guess
-  do
-    guess=$(tolower "$guess")
-    if [[ "$guess" =~ ($answer) ]]
-    then
-      echo $CORRECT
-      break
-    elif [ "$guess" = "" ] 
-    then
-      echo $INCORRECT
-      break
-    elif [ "q" = "$guess" ]
-    then
-      echo $EXIT_SIGNAL
-      break
-    fi
-  done   
+    while read -r guess
+    do
+        guess=$(tolower "$guess")
+        if [[ "$guess" =~ ($answer) ]]
+        then
+            IS_CORRECT="$CORRECT"
+            #echo $CORRECT
+            break
+        elif [ "$guess" = "" ] 
+        then
+            IS_CORRECT="$GIVE_UP"
+            #echo $GIVE_UP
+            break
+        elif [ "q" = "$guess" ]
+        then
+            IS_CORRECT="$EXIT_SIGNAL"
+            #echo $EXIT_SIGNAL
+            break
+        else 
+            if test "$BELL_ENABLED" = "TRUE"
+            then
+                printf "\a"
+            fi
+            printf "\e[4;33mKeep guessing!\e[0m\n"
+        fi
+    done     
 }
 
 CORRECT_COUNT=0
@@ -224,42 +215,43 @@ echo
 
 if [ "$LIMIT" = '' ]
 then
-  NUM_WORDS_TO_GUESS="$NUM_ELEMS"
+    NUM_WORDS_TO_GUESS="$NUM_ELEMS"
 else
-  validateLimit "$LIMIT"
-  NUM_WORDS_TO_GUESS="$LIMIT"
+    validateLimit "$LIMIT"
+    NUM_WORDS_TO_GUESS="$LIMIT"
 fi
 
 # main loop
 for (( i=1; i<=NUM_WORDS_TO_GUESS; i++))
 do
-  PROMPT="${WORDS[${i}]%:*}"
-  ANSWER_RAW="${WORDS[${i}]#*:}"
-  ANSWER=$(tolower "$ANSWER_RAW")
+    PROMPT="${WORDS[${i}]%:*}"
+    ANSWER_RAW="${WORDS[${i}]#*:}"
+    ANSWER=$(tolower "$ANSWER_RAW")
  
-  printf "\e[1;35m%s\e[0m\n" "$PROMPT"
-  say -v "Anna" "$PROMPT"
+    printf "\e[1;35m%s\e[0m\n" "$PROMPT"
+    say -v "Anna" "$PROMPT"
 
-  IS_CORRECT=$(checkGuess "${ANSWER}")
+    #IS_CORRECT=$(checkGuess "${ANSWER}")
+    checkGuess "${ANSWER}"
 
-  if [ "$IS_CORRECT" = "$CORRECT" ]
-  then
-    prettyAnswers=$(prettifyAnswers "true" "$ANSWER")
-    printf "\n\e[1;32m%s\e[0m\n\n" "${prettyAnswers}"
-    ((CORRECT_COUNT++))
-  elif [ "$IS_CORRECT" = "$EXIT_SIGNAL" ]
-  then
-    ((i-=1))
-    break
-  elif [ "$IS_CORRECT" = "$INCORRECT" ]
-  then
-    prettyAnswers=$(prettifyAnswers "false" "$ANSWER")
-    printf "\e[1;31m%s\e[0m\n" "${prettyAnswers}"
-    echo 
-    echo "${PROMPT} -> ${ANSWER_RAW}" >> "$TEMP_INCORRECT_PATH"
-  else
-    exit $ERROR_CHECK_GUESS_RETVAL
-  fi
+    if [ "$IS_CORRECT" = "$CORRECT" ]
+    then
+        prettyAnswers=$(prettifyAnswers "true" "$ANSWER")
+        printf "\n\e[1;32m%s\e[0m\n\n" "${prettyAnswers}"
+        ((CORRECT_COUNT++))
+    elif [ "$IS_CORRECT" = "$EXIT_SIGNAL" ]
+    then
+        ((i-=1))
+        break
+    elif [ "$IS_CORRECT" = "$GIVE_UP" ]
+    then
+        prettyAnswers=$(prettifyAnswers "false" "$ANSWER")
+        printf "\e[1;31m%s\e[0m\n" "${prettyAnswers}"
+        echo 
+        echo "${PROMPT} -> ${ANSWER_RAW}" >> "$TEMP_INCORRECT_PATH"
+    else
+        exit $ERROR_CHECK_GUESS_RETVAL
+    fi
 done
  
 if test "$i" -gt "$NUM_WORDS_TO_GUESS"
@@ -271,10 +263,10 @@ fi
 
 if [ "$QUESTION_NUM" -eq 0 ]
 then
-  SCORE_PERCENTAGE=0
+    SCORE_PERCENTAGE=0
 else
-  SCORE_PERCENTAGE=$(echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc)
-  SCORE_PERCENTAGE=$(echo "${SCORE_PERCENTAGE}" | awk '{print int($1+0.5)}')
+    SCORE_PERCENTAGE=$(echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc)
+    SCORE_PERCENTAGE=$(echo "${SCORE_PERCENTAGE}" | awk '{print int($1+0.5)}')
 fi
 
 #end message
