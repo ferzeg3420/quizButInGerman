@@ -13,6 +13,7 @@ FILE_PATH="/Users/fernandozegada/Documents/languages/german-to-english"
 TEMP_PATH="/tmp/deutsche.temp"
 TEMP_INCORRECT_PATH="/tmp/deutsche_incorrect.temp"
 LIMIT=''
+DIFFICULTY=''
 
 # Declare the array of words
 declare -a WORDS
@@ -20,7 +21,74 @@ declare -a WORDS
 # clear or create the incorrect answers file
 echo -n "" > "$TEMP_INCORRECT_PATH"
 
-sort -R "$FILE_PATH" > $TEMP_PATH
+print_usage() {
+  echo
+  echo "Usage: deutsche [-h] [-l number] [-d number]"
+  echo "    Try and translate all of these german words!"
+  echo
+  echo "    -h    Prints this message and quits"
+  echo "    -l    Limits the number of words the user has to translate"
+  echo "    -e    Edit the answer sheet with your default editor"
+  echo "    -d    Set the difficulty: 1) easy 2) medium 3) hard"
+  echo
+}
+
+validateLimit() {
+  if [[ "$1" =~ ^[1-9][0-9]*$ ]]
+  then
+    if [ "$NUM_ELEMS" -lt "$1" ]
+    then
+      echo "The limit value is larger than the number of elements" >&2
+      exit $ERROR_LIMIT_TOO_LARGE
+    fi
+  else
+    echo "The limit value is not a valid number" >&2
+    exit $ERROR_NOT_A_NUMBER
+  fi
+}
+
+# Don't delete. This function exits on bad input for the -d flag.
+setDifficulty() {
+    local difficulty="$1"
+    case "$difficulty" in
+        1) DIFFICULTY="EASY" ;;
+        2) DIFFICULTY="MEDIUM" ;;
+        3) DIFFICULTY="HARD" ;;
+        *) print_usage; exit ;;
+    esac
+}
+
+# process flags (command options)
+while getopts 'hl:ed:' flag
+do
+  case "${flag}"
+  in
+    l) LIMIT=${OPTARG};;
+    h) print_usage 
+       exit $SUCCESS;;
+    e) ${EDITOR} ${FILE_PATH} 
+       exit $?;;
+    d) setDifficulty "${OPTARG}";;
+    *) print_usage
+       exit $ERROR_BAD_FLAGS;;
+  esac
+done
+
+# combine all the files and random scramble them.
+case "$DIFFICULTY" in 
+    "EASY") sort -R "${FILE_PATH}-easy" > "$TEMP_PATH" ;;
+    "MEDIUM") cat "${FILE_PATH}-easy" "${FILE_PATH}-medium" \
+        | sort -R > "$TEMP_PATH" ;;
+    "HARD") cat "${FILE_PATH}-easy" "${FILE_PATH}-medium" "${FILE_PATH}-hard" \
+     | sort -R > $TEMP_PATH ;;
+    *) cat "${FILE_PATH}-easy" "${FILE_PATH}-medium" "${FILE_PATH}-hard" \
+     | sort -R > $TEMP_PATH ;;
+esac
+
+#cat "${FILE_PATH}-easy" "${FILE_PATH}-medium" "${FILE_PATH}-hard" \
+     #| sort -R > $TEMP_PATH
+
+#sort -R "$FILE_PATH" > $TEMP_PATH
 
 # put the lines of the file in a the words array
 count=0
@@ -32,16 +100,10 @@ done < $TEMP_PATH
 
 NUM_ELEMS=${#WORDS[@]}
 
-print_usage() {
-  echo
-  echo "Usage: deutsche [-h] [-l number]"
-  echo "    Try and translate all of these german words!"
-  echo
-  echo "    -h    Prints this message and quits"
-  echo "    -l    Limits the number of words the user has to translate"
-  echo "    -e    Edit the answer sheet with your default editor"
-  echo
-}
+if test -n "$LIMIT"
+then
+   validateLimit "$LIMIT"
+fi
 
 prettifyAnswers() {
   isCorrectAnswer="$1"
@@ -92,35 +154,21 @@ prettifyAnswers() {
   fi
 }
 
-validateLimit() {
-  if [[ "$1" =~ ^[1-9][0-9]*$ ]]
-  then
-    if [ "$NUM_ELEMS" -lt "$1" ]
-    then
-      echo "The limit value is larger than the number of elements" >&2
-      exit $ERROR_LIMIT_TOO_LARGE
-    fi
-  else
-    echo "The limit value is not a valid number" >&2
-    exit $ERROR_NOT_A_NUMBER
-  fi
-}
-
 # process flags (command options)
-while getopts 'hl:e' flag
-do
-  case "${flag}"
-  in
-    l) validateLimit "${OPTARG}"
-       LIMIT=${OPTARG};;
-    h) print_usage 
-       exit $SUCCESS;;
-    e) ${EDITOR} ${FILE_PATH} 
-       exit $?;;
-    *) print_usage
-       exit $ERROR_BAD_FLAGS ;;
-  esac
-done
+#while getopts 'hl:e' flag
+#do
+#  case "${flag}"
+#  in
+#    l) validateLimit "${OPTARG}"
+#       LIMIT=${OPTARG};;
+#    h) print_usage 
+#       exit $SUCCESS;;
+#    e) ${EDITOR} ${FILE_PATH} 
+#       exit $?;;
+#    *) print_usage
+#       exit $ERROR_BAD_FLAGS ;;
+#  esac
+#done
 
 tolower() {
   echo "$1" | tr '[:upper:]' '[:lower:]'
@@ -130,13 +178,17 @@ showWrongGuesses() {
   FIRST_LINE=$(head -1 "${TEMP_INCORRECT_PATH}")
   if [ "$FIRST_LINE" != "" ]
   then
-    echo "Show incorrect guesses? [Y/y]"
-
+    printf "\e[7mShow incorrect guesses? [Y/y]:\e[0m "
     read -r USER_RESPONSE
+
     if [[ "$USER_RESPONSE" =~ [Yy] ]]
     then
       less "$TEMP_INCORRECT_PATH"
     fi
+  else
+    printf "\e[?25l\e[7mPress any key to exit"
+    read -rs
+    printf "\e[?25h\e[0m"
   fi
 }
 
@@ -179,7 +231,7 @@ else
 fi
 
 # main loop
-for (( i=0; i<NUM_WORDS_TO_GUESS; i++))
+for (( i=1; i<=NUM_WORDS_TO_GUESS; i++))
 do
   PROMPT="${WORDS[${i}]%:*}"
   ANSWER_RAW="${WORDS[${i}]#*:}"
@@ -210,21 +262,25 @@ do
   fi
 done
  
-QUESTION_NUM=$(echo "$i + 1" |  bc)
-# echo "QUESTION_NUM=${QUESTION_NUM}"
+if test "$i" -gt "$NUM_WORDS_TO_GUESS"
+then
+    QUESTION_NUM=$((i - 1)) 
+else
+    QUESTION_NUM="$i" 
+fi
 
 if [ "$QUESTION_NUM" -eq 0 ]
 then
   SCORE_PERCENTAGE=0
 else
-    SCORE_PERCENTAGE=$(echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc)
+  SCORE_PERCENTAGE=$(echo "scale=3;(${CORRECT_COUNT}/${QUESTION_NUM})*100" | bc)
   SCORE_PERCENTAGE=$(echo "${SCORE_PERCENTAGE}" | awk '{print int($1+0.5)}')
 fi
 
 #end message
-clear
 echo
 echo "FINAL SCORE: ${SCORE_PERCENTAGE}%"
+echo
 echo
 showWrongGuesses
 clear
